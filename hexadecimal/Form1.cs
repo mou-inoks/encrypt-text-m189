@@ -6,9 +6,13 @@ namespace hexadecimal
 {
     public partial class Form1 : Form
     {
+        public byte[] aesKey { get; set; } = new byte[32];
+        public byte[] aesIV { get; set; } = new byte[16];
         public byte[] encryptedByte { get;set; }
-        public byte[] aesKey { get;set; }
-        public Form1()
+        public byte[] encodedInput { get;set; }
+        public Aes aesAlg { get;set; }
+
+    public Form1()
         {
             InitializeComponent();
         }
@@ -21,28 +25,40 @@ namespace hexadecimal
         {
 
         }
-        static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key)
+        static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
         {
+            // Check arguments.
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            // Declare the string used to hold
+            // the decrypted text.
             string plaintext = null;
 
+            // Create an Aes object
+            // with the specified key and IV.
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-                aesAlg.Mode = CipherMode.CBC;
-                aesAlg.Padding = PaddingMode.PKCS7;
+                aesAlg.IV = IV;
 
-                byte[] iv = new byte[aesAlg.BlockSize / 8];
-                Array.Copy(cipherText, iv, iv.Length);
-                aesAlg.IV = iv;
-
+                // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                using (System.IO.MemoryStream msDecrypt = new System.IO.MemoryStream(cipherText, iv.Length, cipherText.Length - iv.Length))
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                 {
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (System.IO.StreamReader srDecrypt = new System.IO.StreamReader(csDecrypt))
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                         {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
                             plaintext = srDecrypt.ReadToEnd();
                         }
                     }
@@ -52,60 +68,62 @@ namespace hexadecimal
             return plaintext;
         }
 
-        static byte[] GenerateAESKeyFromSHA512Hash(string hash)
+        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
         {
-            int keySize = 256; // Clé AES de 256 bits
-            int iterations = 10000; // Nombre d'itérations recommandées pour PBKDF2
-            byte[] salt = Encoding.UTF8.GetBytes("Sel");
-
-            using (Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(hash, salt, iterations))
-            {
-                return pbkdf2.GetBytes(keySize / 8);
-            }
-        }
-
-        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key)
-        {
+            // Check arguments.
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
             byte[] encrypted;
 
+            // Create an Aes object
+            // with the specified key and IV.
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-                aesAlg.Mode = CipherMode.CBC;
-                aesAlg.Padding = PaddingMode.PKCS7;
+                aesAlg.IV = IV;
 
+                // Create an encryptor to perform the stream transform.
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                using (System.IO.MemoryStream msEncrypt = new System.IO.MemoryStream())
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (System.IO.StreamWriter swEncrypt = new System.IO.StreamWriter(csEncrypt))
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                         {
+                            //Write all data to the stream.
                             swEncrypt.Write(plainText);
                         }
+                        encrypted = msEncrypt.ToArray();
                     }
-                    encrypted = msEncrypt.ToArray();
                 }
             }
 
+            // Return the encrypted bytes from the memory stream.
             return encrypted;
         }
 
-
-        static string CalculateSHA512Hash(string input)
+        string CalculateSHA512Hash(string input)
         {
             using (SHA512 sha512 = SHA512.Create())
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(input);
-                byte[] hashBytes = sha512.ComputeHash(bytes);
+                var hash = sha512.ComputeHash(bytes);
+                Buffer.BlockCopy(hash, 0, aesKey, 0, 32);
+                Buffer.BlockCopy(hash, 0, aesIV, 0, 16);
 
-                return Convert.ToBase64String(hashBytes);
+                return Convert.ToBase64String(aesKey);
             }
         }
 
         private void generatehash_Click(object sender, EventArgs e)
         {
+            encodedInput = Encoding.UTF8.GetBytes(key.Text);
             hashbox.Text = CalculateSHA512Hash(key.Text);
         }
 
@@ -121,18 +139,16 @@ namespace hexadecimal
 
         private void chiffrer_Click(object sender, EventArgs e)
         {
-
-            aesKey = GenerateAESKeyFromSHA512Hash(hashbox.Text);
-
-            encryptedByte = EncryptStringToBytes_Aes(textToChiffr.Text, aesKey);
-
-            textToChiffr.Text = BitConverter.ToString(encryptedByte).Replace("-", "");
-
+            //aesAlg = Aes.Create();
+            //encryptedByte = EncryptStringToBytes_Aes(textToChiffr.Text, aesAlg.Key, aesAlg.IV);
+            encryptedByte = EncryptStringToBytes_Aes(textToChiffr.Text, aesKey, aesIV);
+            textToChiffr.Text = Convert.ToBase64String(encryptedByte);
         }
 
         private void dechiffre_Click(object sender, EventArgs e)
         {
-            textToChiffr.Text = DecryptStringFromBytes_Aes(encryptedByte, aesKey);
+            //textToChiffr.Text = DecryptStringFromBytes_Aes(encryptedByte, aesAlg.Key, aesAlg.IV);
+            textToChiffr.Text = DecryptStringFromBytes_Aes(encryptedByte, aesKey, aesIV);
         }
     }
 }

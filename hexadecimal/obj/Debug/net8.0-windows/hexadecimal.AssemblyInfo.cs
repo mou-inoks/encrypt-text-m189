@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("hexadecimal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+453b44cbcfa72b67450f5bd58ffcadd039acf548")]
 [assembly: System.Reflection.AssemblyProductAttribute("hexadecimal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("hexadecimal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
