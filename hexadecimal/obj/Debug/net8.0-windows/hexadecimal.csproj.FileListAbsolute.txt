@@ -1,0 +1,16 @@
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\bin\Debug\net8.0-windows\hexadecimal.exe
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\bin\Debug\net8.0-windows\hexadecimal.deps.json
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\bin\Debug\net8.0-windows\hexadecimal.runtimeconfig.json
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\bin\Debug\net8.0-windows\hexadecimal.dll
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\bin\Debug\net8.0-windows\hexadecimal.pdb
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.Form1.resources
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.csproj.GenerateResource.cache
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.AssemblyInfoInputs.cache
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.AssemblyInfo.cs
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.csproj.CoreCompileInputs.cache
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.dll
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\refint\hexadecimal.dll
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.pdb
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\hexadecimal.genruntimeconfig.cache
+C:\Users\mou\source\repos\hexadecimal\hexadecimal\obj\Debug\net8.0-windows\ref\hexadecimal.dll
